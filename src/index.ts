@@ -1,5 +1,5 @@
 import express from "express";
-import { getHelloMessage } from "./utils";
+import { getHelloMessage } from "./utils/utils";
 
 const app = express();
 

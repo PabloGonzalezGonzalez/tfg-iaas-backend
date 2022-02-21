@@ -1,19 +1,19 @@
 {
-  "name": "template-node-ts",
+  "name": "iaas-backend",
   "version": "1.0.0",
-  "description": "📓 Template repo with node + ts",
+  "description": "Backend application for IaaS",
   "keywords": [],
-  "homepage": "https://github.com/raulanatol/template-node-ts#readme",
+  "homepage": "https://github.com/PabloGonzalezGonzalez/tfg-iaas-backend",
   "bugs": {
-    "url": "https://github.com/raulanatol/template-node-ts/issues"
+    "url": "https://github.com/PabloGonzalezGonzalez/tfg-iaas-backend"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/raulanatol/template-node-ts.git"
+    "url": "git+https://github.com/PabloGonzalezGonzalez/tfg-iaas-backend.git"
   },
   "license": "ISC",
-  "author": "",
-  "main": "index.js",
+  "author": "Pablo González González",
+  "main": "index.ts",
   "scripts": {
     "build": "tsc",
     "clean": "shx rm -rf dist lib",
@@ -26,7 +26,7 @@
     "preset": "ts-jest"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "4.17.3"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.11.5",

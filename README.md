@@ -1,13 +1,4 @@
-<div align="center">
-    <h1>template-node-ts</h1>
-</div>
-
-<p>📓 Template repo with node + ts</p>
-
----
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+# IaaS Backend Application
 **Table of Contents**
 
 - [Installation](#installation)

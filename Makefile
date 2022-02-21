@@ -5,42 +5,23 @@ init:
 	@yarn install
 
 start:
-	@echo "🏃‍♀️ Starting project"
+	@echo "Starting project"
 	@yarn dev
 
 check: --pre_check test build
-	@echo "✅"
-
-docs:
-	@doctoc README.md
-	@echo "📚 Documentation ready!"
+	@echo "Checking project"
 
 clean:
-	@echo "🛁 Cleaning..."
+	@echo "Cleaning..."
 	@yarn clean
-
-clean_all:
-	@echo "🧨 Clean all"
-	@yarn cleanup
 
 test:
 	@echo "Testing..."
 	@yarn test-ci
 
 build:
-	@echo "👩‍🏭 Building..."
+	@echo "Building..."
 	@yarn build
-
-release_patch: release
-
-release_minor: check
-	@.scripts/finish-release minor
-
-release_major: check
-	@.scripts/finish-release major
-
-release: check
-	@.scripts/finish-release patch
 
 --pre_check:
 	@yarn clean

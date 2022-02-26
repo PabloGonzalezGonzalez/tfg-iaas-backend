@@ -1,0 +1,16 @@
+---
+# tasks file for vm_create
+
+- name: Create a VM
+  ovirt_vm:
+    auth: "{{ ovirt_auth }}"
+    cluster: Cluster-Rojo
+    name: "{{ prefix }}-{{ item }}"
+    cpu_cores: 1
+    cpu_sockets: 1
+    memory: 1GiB
+    template: centos-8-sinred-cloudinit
+    nics: "{{ node_nics }}"
+    state: present
+    wait: yes
+  with_items: "{{ nodes }}"

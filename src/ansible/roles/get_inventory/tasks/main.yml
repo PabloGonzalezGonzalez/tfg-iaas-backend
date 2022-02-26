@@ -1,0 +1,26 @@
+---
+# tasks file for get_inventory
+- name: Get all VM info
+  ovirt_vm_info:
+    auth: "{{ ovirt_auth }}"
+    all_content: true
+    fetch_nested: true
+  register: vm_result
+
+- name: Inventory list of VMs
+  set_fact:
+    vms: "{{ vms }} + ['{{ item.name }}']"
+  when: "item.name != 'HostedEngine'"
+  with_items:
+    "{{ vm_result.ovirt_vms }}"
+
+- name: Copying the inventory to an external file
+  copy:
+    content="{{ vms | to_nice_yaml }}"
+    dest=../files/inventory.yml
+
+- name: Debugger
+  debug:
+    msg: "Inventory: {{ vms | to_nice_yaml(indent=3) }}"
+
+

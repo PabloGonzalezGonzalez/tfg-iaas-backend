@@ -1,0 +1,9 @@
+---
+# tasks file for vm_delete
+
+- name: Stop and Remove a VM
+  ovirt_vm:
+    auth: "{{ ovirt_auth }}"
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ nodes }}"

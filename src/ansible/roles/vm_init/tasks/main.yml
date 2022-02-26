@@ -1,0 +1,36 @@
+---
+# tasks file for vm_update
+
+- name: Updating VM
+  ovirt_vm:
+    auth: "{{ ovirt_auth }}"
+    name: "{{ prefix }}-{{ item }}"
+    state: running
+    cloud_init_nics:
+      - nic_name: ens3
+        nic_boot_protocol: dhcp
+        nic_on_boot: yes
+        nic_on_boot: True
+    cloud_init:
+      host_name: "{{ item }}"
+      user_name: ansible
+
+      ## Passwd = alumno2020
+      root_password: $6$3diC789eX$WZPkCdIrIm11cbZyhx/uwsydqgqEb1hsBvOXIF31ngjqxYhGyXMdaHZrwsf8vZHqEBoqPoXhWANPR/itAEU7l.
+
+      authorized_ssh_keys: "{{ ssh_keys }}"
+      custom_script: |
+        write_files:
+          - path: /etc/sudoers.d/ansible
+            permissions: '0644'
+            content: |
+              ansible ALL=(ALL) NOPASSWD:ALL
+          - path: /tmp/saludos.txt
+            permissions: '0644'
+            content: |
+              "Que pasa pisha"
+        runcmd:
+          - sed -i '/AllowUsers/c\AllowUsers adminstic usuario soporteiass ansible' /etc/ssh/sshd_config
+          - systemctl restart sshd
+    wait: yes
+  with_items: "{{ nodes }}"

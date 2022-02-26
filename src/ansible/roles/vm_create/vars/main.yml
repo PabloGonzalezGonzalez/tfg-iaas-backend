@@ -1,0 +1,10 @@
+---
+# vars file for vm_create
+
+# Perfil de la red privada
+node_nics:
+  - name: nic1
+    profile_name: DOC1
+
+# Nodos a crear
+prefix: ID

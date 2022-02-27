@@ -1,12 +1,13 @@
 import express from 'express';
-import { createVarsFile } from './utils/serverUtils';
+import { createVarsFile, execPlaybook } from './utils/serverUtils';
 import Path from 'path';
 
 const app = express();
 
 /* constants */
 const CREATE_MV_PATH = Path.join(__dirname, 'ansible', 'create_mv');
-console.log({ CREATE_MV_PATH });
+const GET_INVENTORY_PATH = Path.join(__dirname, 'ansible', 'get_inventory');
+console.log({ CREATE_MV_PATH, GET_INVENTORY_PATH });
 
 const varsFile = Path.join(__dirname, 'files', 'vars.json');
 const scriptFile = Path.join(__dirname, 'utils', 'parseJsonToYaml.py');
@@ -19,6 +20,7 @@ app.get('/test', (req, res) => {
   };
 
   createVarsFile(varsFile, scriptFile, tmp);
+  execPlaybook(GET_INVENTORY_PATH);
 
   res.send('test');
 });

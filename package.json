@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "express": "4.17.3",
+    "json-to-pretty-yaml": "1.2.2",
     "node-ansible": "0.5.5",
     "python-shell": "3.0.1"
   },

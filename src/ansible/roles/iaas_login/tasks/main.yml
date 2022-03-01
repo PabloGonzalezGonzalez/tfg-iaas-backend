@@ -6,7 +6,7 @@
     # username: "{{ ovirt_username }}"
     # password: "{{ ovirt_password }}"
     username: alu0100887037@ULL
-    password: Machado1996
+    password: xd
     headers:
       filter: true
   debugger: never

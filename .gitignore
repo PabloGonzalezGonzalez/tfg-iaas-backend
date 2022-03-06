@@ -4,5 +4,6 @@ dist
 
 pabloTFG.yaml
 vars.json
+credentials.yaml
 
 .log

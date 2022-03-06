@@ -1,10 +1,13 @@
 ---
 # tasks file for get_inventory
+- name: First Debugger
+  debug:
+    msg: " {{ ovirt_auth }}"
+
 - name: Get all VM info
   ovirt_vm_info:
     auth: "{{ ovirt_auth }}"
     all_content: true
-    fetch_nested: true
   register: vm_result
 
 - name: Inventory list of VMs

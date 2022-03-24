@@ -5,6 +5,3 @@
 node_nics:
   - name: nic1
     profile_name: DOC1
-
-# Nodos a crear
-prefix: ID

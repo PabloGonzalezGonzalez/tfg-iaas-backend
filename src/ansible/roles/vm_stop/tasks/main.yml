@@ -1,0 +1,8 @@
+---
+# tasks file for vm_stop
+- name: Stop VM
+  ovirt_vm:
+      auth: '{{ ovirt_auth }}'
+      name: '{{ prefix }}-{{ item }}'
+      state: stopped
+  with_items: "{{ nodes }}"

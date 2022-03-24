@@ -5,23 +5,58 @@ import Path from 'path';
 const app = express();
 
 /* constants */
-const CREATE_MV_PATH = Path.join(__dirname, 'ansible', 'create_mv');
 const GET_INVENTORY_PATH = Path.join(__dirname, 'ansible', 'get_inventory');
-console.log({ CREATE_MV_PATH, GET_INVENTORY_PATH });
+const CREATE_VM_PATH = Path.join(__dirname, 'ansible', 'create_vm');
+const START_VM_PATH = Path.join(__dirname, 'ansible', 'start_vm');
+const STOP_VM_PATH = Path.join(__dirname, 'ansible', 'stop_vm');
+const REMOVE_VM_PATH = Path.join(__dirname, 'ansible', 'remove_vm');
+console.log({ CREATE_VM_PATH, GET_INVENTORY_PATH, START_VM_PATH });
 
-app.get('/test', (req: Request, res: Response) => {
-  const tmp = {
-    action: 'remove',
-    username: 'alu0100887037',
-    password: 'password'
-  };
+/* test */
+const tmpVars = {
+  action: 'remove',
+  username: 'alu0100887037',
+  password: 'password',
+  nodes: 'pablo-test',
+  prefix: 'TFG'
+};
 
-  createVarsFile(tmp);
-  execAnsiblePlaybook(GET_INVENTORY_PATH);
+app.get('/test/create', (req: Request, res: Response) => {
+  createVarsFile(tmpVars);
+  execAnsiblePlaybook(CREATE_VM_PATH);
 
-  res.send('test');
+  res.send('test create');
 });
 
+app.get('/test/inventory', (req: Request, res: Response) => {
+  createVarsFile(tmpVars);
+  execAnsiblePlaybook(GET_INVENTORY_PATH);
+
+  res.send('test inventory');
+});
+
+app.get('/test/start', (req: Request, res: Response) => {
+  createVarsFile(tmpVars);
+  execAnsiblePlaybook(START_VM_PATH);
+
+  res.send('test start');
+});
+
+app.get('/test/stop', (req: Request, res: Response) => {
+  createVarsFile(tmpVars);
+  execAnsiblePlaybook(STOP_VM_PATH);
+
+  res.send('test stop');
+});
+
+app.get('/test/remove', (req: Request, res: Response) => {
+  createVarsFile(tmpVars);
+  execAnsiblePlaybook(REMOVE_VM_PATH);
+
+  res.send('test remove');
+});
+
+/* server */
 app.listen(3000, () => {
   console.log('🚀 Running at localhost:3000');
 });

@@ -22,8 +22,10 @@
         name: iaas_login
 
   # Tasks
-  roles:
-    - get_inventory
+  tasks:
+    - name: Get inventory
+      include_role:
+        name: get_inventory
 
   # Post-tasks
   post_tasks:

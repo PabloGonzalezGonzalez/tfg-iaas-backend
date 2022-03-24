@@ -3,8 +3,8 @@
   ovirt_auth:
     url: https://iaas.ull.es/ovirt-engine/api
     insecure: yes
-     username: "{{ ovirt_username }}"
-     password: "{{ ovirt_password }}"
+    username: "{{ ovirt_username }}"
+    password: "{{ ovirt_password }}"
     headers:
       filter: true
   debugger: never

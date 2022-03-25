@@ -1,7 +1,0 @@
----
-# tasks file for vm_poweroff
-- name: Start VM
-  ovirt_vm:
-      auth: '{{ ovirt_auth }}'
-      name: '{{ prefix }}-{{ item }}'
-      state: running

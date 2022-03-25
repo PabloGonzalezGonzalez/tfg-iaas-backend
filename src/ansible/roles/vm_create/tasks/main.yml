@@ -1,6 +1,5 @@
 ---
 # tasks file for vm_create
-
 - name: Create a VM
   ovirt_vm:
     auth: "{{ ovirt_auth }}"
@@ -9,8 +8,8 @@
     cpu_cores: 1
     cpu_sockets: 1
     memory: 1GiB
-    template: centos-8-sinred-cloudinit
+    template:  debian-11-sinred-cloudinit
     nics: "{{ node_nics }}"
-    state: present
+    state: absent
     wait: yes
   with_items: "{{ nodes }}"

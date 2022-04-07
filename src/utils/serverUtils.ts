@@ -3,14 +3,31 @@ import { stringify as jsonToYaml } from 'json-to-pretty-yaml';
 
 import fs from 'fs';
 import Path from 'path';
-
 import ErrnoException = NodeJS.ErrnoException;
 
 /* Interfaces */
-interface varsObject {
-  action: string;
+export interface createVMInterface {
+  name: string;
+  cluster: string;
+  distro: string;
+}
+
+export type nodesType =
+  | string
+  | string[]
+  | createVMInterface
+  | createVMInterface[];
+
+export type actionType = 'start' | 'stop' | 'restart';
+
+interface varsInterface {
+  action?: actionType;
+  nodes?: nodesType;
+  vmName?: string; // deprecated
   username?: string;
   password?: string;
+  prefix?: string;
+  vmUsername?: string;
 }
 
 /* Constants */
@@ -26,7 +43,7 @@ const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 const varsFile = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 
 /* Functions */
-export const createVarsFile = (vars: varsObject) => {
+export const createVarsFile = (vars: varsInterface) => {
   fs.writeFile(varsFile, jsonToYaml(vars), (error: ErrnoException | null) => {
     if (error) {
       throw error;

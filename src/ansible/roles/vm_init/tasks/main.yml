@@ -1,18 +1,19 @@
 ---
 # tasks file for vm_update
-
 - name: Updating VM
   ovirt_vm:
     auth: "{{ ovirt_auth }}"
-    name: "{{ prefix }}-{{ item }}"
+    name: "{{ item.name }}"
+    cluster: "{{ item.cluster }}"
     state: running
     cloud_init_nics:
       - nic_name: ens3
-        nic_boot_protocol: dhcp
-        nic_on_boot: yes
+        nic_boot_protocol: static
+        nic_netmask: 255.255.255.0
+        nic_gateway: 172.20.20.1
         nic_on_boot: True
     cloud_init:
-      host_name: "{{ item }}"
+      host_name: "{{ item.name }}"
       user_name: ansible
 
       ## Passwd = alumno2020

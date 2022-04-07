@@ -1,5 +1,5 @@
 ---
-- name: Reset user's password
+- name: Create VMs.
   hosts: localhost
   gather_facts: false
 
@@ -18,22 +18,10 @@
         name: iaas_login
 
   # Tasks
-  # roles:
   tasks:
-    - name: Change user's password
-      ovirt_vm:
-        auth: "{{ ovirt_auth }}"
-        name: "{{ item.name }}"
-        cloud_init:
-          host_name: "{{ item.name }}"
-          custom_script: |
-            write_files:
-              - path: /tmp/saludos.txt
-                permissions: '0644'
-                content: |
-                  "Que pasa pisha"
-        wait: yes
-      with_items: "{{ nodes }}"
+    - name: Restart VM
+      include_role:
+        name: vm_restart
 
   # Post-tasks
   post_tasks:

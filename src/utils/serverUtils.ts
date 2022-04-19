@@ -54,28 +54,25 @@ export const createVarsFile = (vars: varsInterface) => {
 
 export const execAnsiblePlaybook = (playbookFile) => {
   const playbook = new Playbook().playbook(playbookFile);
-  playbook.on('stdout', (data) => {
-    console.log(data.toString());
-  });
-  playbook.on('stderr', (data) => {
-    console.log(data.toString());
-  });
+  // playbook.on('stdout', (data) => {
+  //   console.log(data.toString());
+  // });
+  // playbook.on('stderr', (data) => {
+  //   console.log(data.toString());
+  // });
   const promise = playbook.exec();
 
   promise.then(
     (successResult) => {
       // Successful log file
       console.log(
-        `Successful playbook execution with exit code: ${successResult.code}`
+        `Success on playbook execution with exit code: ${successResult.code}`
       );
 
       const date = new Date();
-      console.log(LOG_SUCCESS);
-      console.log(successResult.output);
-
       fs.appendFile(
         LOG_SUCCESS,
-        `${date}\n${successResult.output}`,
+        `${date}\n${successResult.output}\n`,
         (errorFile: ErrnoException | null) => {
           if (errorFile) {
             throw errorFile;
@@ -84,14 +81,17 @@ export const execAnsiblePlaybook = (playbookFile) => {
           console.log(`Successful log on:  ${LOG_SUCCESS}\n`);
         }
       );
+
+      return successResult.code;
     },
     (error) => {
       // Failed log archive
       const date = new Date();
+      console.log('\n\t Error: \n', error);
 
       fs.appendFile(
         LOG_ERROR,
-        `${date}\n${error}`,
+        `${date}\n${error}\n`,
         (errorFile: ErrnoException | null) => {
           if (errorFile) {
             throw errorFile;
@@ -100,6 +100,8 @@ export const execAnsiblePlaybook = (playbookFile) => {
           console.log(`Failed log on: ${LOG_ERROR}\n`);
         }
       );
+
+      return new Error('Error on playbook execution');
     }
   );
 };

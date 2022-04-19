@@ -1,9 +1,5 @@
 ---
 # tasks file for get_inventory
-- name: First Debugger
-  debug:
-    msg: " {{ ovirt_auth }}"
-
 - name: Get all VM info
   ovirt_vm_info:
     auth: "{{ ovirt_auth }}"
@@ -20,7 +16,7 @@
 - name: Copying the inventory to an external file
   copy:
     content="{{ vms | to_nice_yaml }}"
-    dest=../files/inventory.yml
+    dest=../files/inventory.yaml
 
 - name: Debugger
   debug:

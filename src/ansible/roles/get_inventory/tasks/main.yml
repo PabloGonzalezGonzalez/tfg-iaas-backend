@@ -18,7 +18,7 @@
     content="{{ vms | to_nice_yaml }}"
     dest=../files/inventory.yaml
 
-- name: Debugger
+- name: Debug - show inventory
   debug:
     msg: "Inventory: {{ vms | to_nice_yaml(indent=3) }}"
 

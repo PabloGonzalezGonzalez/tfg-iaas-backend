@@ -8,10 +8,19 @@ const INVENTORY_FILE = Path.join(__dirname, '..', 'ansible', 'get_inventory');
 /* router */
 const inventoryRouter = Router();
 
-inventoryRouter.get('/', (req: Request, res: Response) => {
-  execAnsiblePlaybook(INVENTORY_FILE);
+inventoryRouter.get('/', async (req: Request, res: Response) => {
+  const executePlaybook = new Promise((resolve, reject) => {
+    const resultCode = execAnsiblePlaybook(INVENTORY_FILE);
+    if (resultCode === 0) {
+      resolve('Success');
+    }
+    reject('Error');
+  });
 
-  res.send('Inventory router working correctly');
+  executePlaybook.then(
+    (value) => res.send(`Codigo: ${value}`),
+    (value) => res.send(`Codigo: ${value}`)
+  );
 });
 
 export default inventoryRouter;

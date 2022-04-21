@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { actionType, createVarsFile, createVMInterface, execAnsiblePlaybook } from '../utils/serverUtils';
+import { ActionType, createVarsFile, CreateVMInterface, execAnsiblePlaybook } from '../utils/serverUtils';
 import Path from 'path'; /* files */
 
 /* files */
@@ -32,7 +32,7 @@ const vmRouter = Router();
 vmRouter.post('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
-    createVarsFile({ nodes: nodes as createVMInterface[] });
+    createVarsFile({ nodes: nodes as CreateVMInterface[] });
     execAnsiblePlaybook(CREATE_FILE);
   }
   res.send('Success on creating vm');
@@ -51,7 +51,7 @@ vmRouter.put('/', (req: Request, res: Response) => {
   if (req.body) {
     const { action, nodes, vmUsername } = req.body;
     createVarsFile({
-      action: action as actionType,
+      action: action as ActionType,
       nodes: nodes as string[],
       vmUsername: vmUsername as string
     });

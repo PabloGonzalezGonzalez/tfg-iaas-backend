@@ -6,23 +6,23 @@ import Path from 'path';
 import ErrnoException = NodeJS.ErrnoException;
 
 /* Interfaces */
-export interface createVMInterface {
+export interface CreateVMInterface {
   name: string;
   cluster: string;
   distro: string;
 }
 
-export type nodesType =
+export type NodesType =
   | string
   | string[]
-  | createVMInterface
-  | createVMInterface[];
+  | CreateVMInterface
+  | CreateVMInterface[];
 
-export type actionType = 'start' | 'stop' | 'restart';
+export type ActionType = 'start' | 'stop' | 'restart';
 
-interface varsInterface {
-  action?: actionType;
-  nodes?: nodesType;
+interface VarsInterface {
+  action?: ActionType;
+  nodes?: NodesType;
   vmName?: string; // deprecated
   username?: string;
   password?: string;
@@ -43,7 +43,7 @@ const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 const varsFile = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 
 /* Functions */
-export const createVarsFile = (vars: varsInterface) => {
+export const createVarsFile = (vars: VarsInterface): void => {
   fs.writeFile(varsFile, jsonToYaml(vars), (error: ErrnoException | null) => {
     if (error) {
       throw error;
@@ -52,16 +52,17 @@ export const createVarsFile = (vars: varsInterface) => {
   });
 };
 
-export const execAnsiblePlaybook = (playbookFile) => {
+export const execAnsiblePlaybook = (playbookFile: string): number => {
   const playbook = new Playbook().playbook(playbookFile);
-  // playbook.on('stdout', (data) => {
-  //   console.log(data.toString());
-  // });
-  // playbook.on('stderr', (data) => {
-  //   console.log(data.toString());
-  // });
+  playbook.on('stdout', (data) => {
+    console.log(data.toString());
+  });
+  playbook.on('stderr', (data) => {
+    console.log(data.toString());
+  });
   const promise = playbook.exec();
 
+  let resultCode;
   promise.then(
     (successResult) => {
       // Successful log file
@@ -82,7 +83,7 @@ export const execAnsiblePlaybook = (playbookFile) => {
         }
       );
 
-      return successResult.code;
+      resultCode = successResult.code;
     },
     (error) => {
       // Failed log archive
@@ -101,7 +102,8 @@ export const execAnsiblePlaybook = (playbookFile) => {
         }
       );
 
-      return new Error('Error on playbook execution');
+      resultCode = 1;
     }
   );
+  return resultCode;
 };

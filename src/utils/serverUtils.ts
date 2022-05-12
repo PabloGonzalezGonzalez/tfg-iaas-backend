@@ -10,6 +10,8 @@ export interface CreateVMInterface {
   name: string;
   cluster: string;
   distro: string;
+  prefix: string;
+  ip: string;
 }
 
 export type NodesType =
@@ -28,6 +30,8 @@ interface VarsInterface {
   password?: string;
   prefix?: string;
   vmUsername?: string;
+  distro?: string;
+  ip?: string;
 }
 
 /* Constants */
@@ -42,8 +46,21 @@ const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 
 const varsFile = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 
+const isCreateVMInterfaceArray = (obj: any): obj is CreateVMInterface[] =>
+  (obj as any)?.map((node) => isCreateVMInterface(node));
+
+const isCreateVMInterface = (obj: any): obj is CreateVMInterface =>
+  (obj as any).name === 'string' && (obj as any).distro === 'string' && (obj as any).cluster === 'string' && (obj as any).prefix === 'string';
+
 /* Functions */
 export const createVarsFile = (vars: VarsInterface): void => {
+  if (vars.nodes) {
+    if (isCreateVMInterfaceArray(vars.nodes)) {
+      vars.nodes.map((node) => node['fullName'] = node.prefix
+        ? `${node.prefix}-${node.name}`
+        : node.name);
+    }
+  }
   fs.writeFile(varsFile, jsonToYaml(vars), (error: ErrnoException | null) => {
     if (error) {
       throw error;

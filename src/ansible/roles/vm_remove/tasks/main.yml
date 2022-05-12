@@ -3,6 +3,6 @@
 - name: Stop and Remove a VM
   ovirt_vm:
     auth: "{{ ovirt_auth }}"
-    name: "{{ item.name }}"
+    name: "{{ item.fullName }}"
     state: absent
   with_items: "{{ nodes }}"

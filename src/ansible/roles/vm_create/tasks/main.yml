@@ -4,12 +4,12 @@
   ovirt_vm:
     auth: "{{ ovirt_auth }}"
     cluster: "{{ item.cluster }}"
-    name: "{{ item.name }}"
+    name: "{{ item.fullName }}"
     cpu_cores: 1
     cpu_sockets: 1
     memory: 1GiB
     template: "{{ item.distro }}"
     nics: "{{ node_nics }}"
-    state: absent
+    state: present
     wait: yes
   with_items: "{{ nodes }}"

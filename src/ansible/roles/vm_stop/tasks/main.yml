@@ -3,6 +3,6 @@
 - name: Stop VM
   ovirt_vm:
     auth: '{{ ovirt_auth }}'
-    name: '{{ item.name }}'
+    name: '{{ item.fullName }}'
     state: stopped
   with_items: "{{ nodes }}"

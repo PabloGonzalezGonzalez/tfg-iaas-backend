@@ -5,26 +5,23 @@
 
   # Variables
   vars_files:
-      - ../files/pabloTFG.yaml
-      - ../files/credentials.yaml
-
-  vars:
-      ssh_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOg/NpAdkuEs5SO6J3CXyP8cwrKfzt8BGURkbDjLf+64/Q2iJ+fejwNktTTUzLgFXeNgT2obetqR/J/OTctyhM3N6/3K4Td9PKk9FHEY5/w5kTr2s9PDjRRlyyRcy0riahEzxYuMzDfJIWPFYFs1Wopu0u82W5B0JCF3+Jj0shjAsT7sFQz3da82OyHurVj0djHhkTN1ksea3jUU+n4LRzFfa+OOBjgPcL9L4SGAzOI3OWC2wB3qOZ0ZpaITM1N4QAhE7pbsXxJy+MBrtEgyV8LQLTw1T/pj6m/uwh8xSpYTcUKiPIzsnV1nmHLt/Gl5HipKFurT0N7mdYZzQ3ORKJ usuario@debian
+    - ../files/pabloTFG.yaml
+    - ../files/credentials.yaml
 
   # Pre-tasks
   pre_tasks:
-      - name: Login to IaaS
-        include_role:
-            name: iaas_login
+    - name: Login to IaaS
+      include_role:
+        name: iaas_login
 
   # Tasks
   tasks:
-      - name: Start VM
-        include_role:
-            name: vm_start
+    - name: Start VM
+      include_role:
+        name: vm_start
 
   # Post-tasks
   post_tasks:
-      - name: Logout from IaaS
-        include_role:
-            name: iaas_logout
+    - name: Logout from IaaS
+      include_role:
+        name: iaas_logout

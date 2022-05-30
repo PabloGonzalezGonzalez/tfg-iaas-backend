@@ -3,6 +3,6 @@
 - name: Restart VM
   ovirt_vm:
     auth: '{{ ovirt_auth }}'
-    name: '{{ item.name }}'
+    name: '{{ item.fullName }}'
     state: reboot
   with_items: "{{ nodes }}"

@@ -8,10 +8,10 @@
     state: running
     cloud_init_nics:
       - nic_name: ens3
-        nic_boot_protocol: static
-        nic_ip_address: "{{ item.ip }}"
-        nic_netmask: 255.255.255.0
-        nic_gateway: 172.20.20.1
+        nic_boot_protocol: dhcp
+        #        nic_ip_address: "{{ item.ip }}"
+        #        nic_netmask: 255.255.255.0
+        #        nic_gateway: 172.20.20.1
         nic_on_boot: True
     cloud_init:
       host_name: "{{ item.fullName }}"

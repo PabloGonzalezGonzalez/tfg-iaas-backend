@@ -3,6 +3,6 @@
 - name: Start VM
   ovirt_vm:
     auth: '{{ ovirt_auth }}'
-    name: '{{ item.name }}'
+    name: '{{ item.fullName }}'
     state: running
   with_items: "{{ nodes }}"

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { ActionType, createVarsFile, CreateVMInterface, execAnsiblePlaybook } from '../utils/serverUtils';
-import Path from 'path'; /* files */
+import { ActionType, createVarsFile, CreateVMInterface, execAnsiblePlaybook, NodesType } from '../utils/serverUtils';
+import Path from 'path';
 
 /* files */
 const START_FILE = Path.join(__dirname, '..', 'ansible', 'start_vm');
@@ -8,22 +8,25 @@ const STOP_FILE = Path.join(__dirname, '..', 'ansible', 'stop_vm');
 const CREATE_FILE = Path.join(__dirname, '..', 'ansible', 'create_vm');
 const REMOVE_FILE = Path.join(__dirname, '..', 'ansible', 'remove_vm');
 const RESTART_FILE = Path.join(__dirname, '..', 'ansible', 'restart_vm');
+const RESET_FILE = Path.join(__dirname, '..', 'ansible', 'reset_vm');
+const SHARE_FILE = Path.join(__dirname, '..', 'ansible', 'share_vm');
 const RESET_PASSWORD_FILE = Path.join(
   __dirname,
   '..',
   'ansible',
   'reset_password'
 );
+const INVENTORY_FILE = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
 /* constants */
 const PLAYBOOKS = {
   start: START_FILE,
   stop: STOP_FILE,
-  resetPassword: RESET_PASSWORD_FILE,
-  restart: RESTART_FILE
-  // resetVM: RESET_FILE,
-  // clone: CLONE_FILE,
+  restartVM: RESTART_FILE,
+  resetVM: RESET_FILE,
+  shareVM: SHARE_FILE,
   // addUser: ADD_USER_FILE
+  resetPassword: RESET_PASSWORD_FILE
 };
 
 /* router */
@@ -49,13 +52,15 @@ vmRouter.delete('/', (req: Request, res: Response) => {
 
 vmRouter.put('/', (req: Request, res: Response) => {
   if (req.body) {
-    const { action, nodes, vmUsername } = req.body;
+    const { actionType, nodes, targetUsername } = req.body;
     createVarsFile({
-      action: action as ActionType,
-      nodes: nodes as string[],
-      vmUsername: vmUsername as string
+      actionType: actionType as ActionType,
+      nodes: nodes as NodesType,
+      targetUsername: targetUsername as string
     });
-    execAnsiblePlaybook(PLAYBOOKS[`${action}`]);
+
+    const inventoryFile = actionType === 'resetPassword' ? INVENTORY_FILE : undefined;
+    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`], inventoryFile);
   }
   res.send('Success on making an action');
 });

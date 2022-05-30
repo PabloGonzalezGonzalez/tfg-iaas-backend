@@ -1,12 +1,17 @@
 ---
-- name: Reset user's password
-  hosts: all
+- name: Create VMs.
+  hosts: localhost
   gather_facts: false
 
   # Variables
   vars_files:
     - ../files/pabloTFG.yaml
     - ../files/credentials.yaml
+
+  vars:
+    node_nics:
+      - name: nic1
+        profile_name: DOCP2P-4010
 
   # Pre-tasks
   pre_tasks:
@@ -15,10 +20,10 @@
         name: iaas_login
 
   # Tasks
-  # roles:
-  tasks:
-    - name: Copy script
-      copy: src=./scripts/reset_password.sh dest=/tmp
+  roles:
+    - vm_remove
+    - vm_create
+    - vm_init
 
   # Post-tasks
   post_tasks:

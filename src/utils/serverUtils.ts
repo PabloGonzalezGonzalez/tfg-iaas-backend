@@ -14,22 +14,22 @@ export interface CreateVMInterface {
   ip: string;
 }
 
-export type NodesType =
-  | string
-  | string[]
-  | CreateVMInterface
-  | CreateVMInterface[];
+export interface SimpleVMInterface {
+  fullName: string;
+}
 
-export type ActionType = 'start' | 'stop' | 'restart';
+export type NodesType = CreateVMInterface[] | SimpleVMInterface[] | string[];
+
+export type ActionType = 'start' | 'stop' | 'restart' | 'resetPassword';
 
 interface VarsInterface {
-  action?: ActionType;
+  actionType?: ActionType;
   nodes?: NodesType;
   vmName?: string; // deprecated
   username?: string;
   password?: string;
   prefix?: string;
-  vmUsername?: string;
+  targetUsername?: string;
   distro?: string;
   ip?: string;
 }
@@ -43,34 +43,65 @@ const LOG_SUCCESS = Path.join(
   'ansible_success.log'
 );
 const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
+const VARS_FILE = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 
-const varsFile = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
+/* Type checkers */
+const isCreateVMInterfaceArray = (obj: unknown): obj is CreateVMInterface[] =>
+  Array.isArray(obj) && obj.every(isCreateVMInterface);
 
-const isCreateVMInterfaceArray = (obj: any): obj is CreateVMInterface[] =>
-  (obj as any)?.map((node) => isCreateVMInterface(node));
+const isCreateVMInterface = (obj: unknown): obj is CreateVMInterface => {
+  const keys = Object.keys(obj as CreateVMInterface);
+  return obj != null && keys.includes('name') && keys.includes('cluster')
+    && keys.includes('distro') && keys.includes('prefix') && keys.includes('ip')
+    && keys.every((key) => typeof (obj as any)[key] === 'string');
+};
 
-const isCreateVMInterface = (obj: any): obj is CreateVMInterface =>
-  (obj as any).name === 'string' && (obj as any).distro === 'string' && (obj as any).cluster === 'string' && (obj as any).prefix === 'string';
+/* Helpers */
+const createObjectFromString = (stringArray: string[]) => {
+  const finalArray = [] as SimpleVMInterface[];
+  stringArray.forEach((element) => {
+    finalArray.push({ fullName: element });
+  });
+
+  return finalArray;
+};
 
 /* Functions */
 export const createVarsFile = (vars: VarsInterface): void => {
+  // Create the final name for the virtual machine
   if (vars.nodes) {
+    // Case: nodes are coming like CreateVMInterface[]
     if (isCreateVMInterfaceArray(vars.nodes)) {
       vars.nodes.map((node) => node['fullName'] = node.prefix
         ? `${node.prefix}-${node.name}`
         : node.name);
     }
+    // Case: nodes are coming like string[]
+    else {
+      vars.nodes = createObjectFromString(vars.nodes as string[]);
+    }
   }
-  fs.writeFile(varsFile, jsonToYaml(vars), (error: ErrnoException | null) => {
+
+  // Set username to 'usuario' by default
+  if (vars.actionType === 'resetPassword') {
+    if (!vars.targetUsername) {
+      vars.targetUsername = 'usuario';
+    }
+  }
+
+  fs.writeFile(VARS_FILE, jsonToYaml(vars), (error: ErrnoException | null) => {
     if (error) {
       throw error;
     }
-    console.log(`Data saved on: ${varsFile}\n`);
+    console.log(`Data saved on: ${VARS_FILE}\n`);
   });
 };
 
-export const execAnsiblePlaybook = (playbookFile: string): number => {
+export const execAnsiblePlaybook = (playbookFile: string, inventory?: string): number => {
   const playbook = new Playbook().playbook(playbookFile);
+  if (!!inventory) {
+    playbook.inventory(inventory);
+  }
   playbook.on('stdout', (data) => {
     console.log(data.toString());
   });
@@ -87,6 +118,7 @@ export const execAnsiblePlaybook = (playbookFile: string): number => {
         `Success on playbook execution with exit code: ${successResult.code}`
       );
 
+      /*
       const date = new Date();
       fs.appendFile(
         LOG_SUCCESS,
@@ -99,6 +131,7 @@ export const execAnsiblePlaybook = (playbookFile: string): number => {
           console.log(`Successful log on:  ${LOG_SUCCESS}\n`);
         }
       );
+       */
 
       resultCode = successResult.code;
     },
@@ -107,6 +140,7 @@ export const execAnsiblePlaybook = (playbookFile: string): number => {
       const date = new Date();
       console.log('\n\t Error: \n', error);
 
+      /*
       fs.appendFile(
         LOG_ERROR,
         `${date}\n${error}\n`,
@@ -118,9 +152,15 @@ export const execAnsiblePlaybook = (playbookFile: string): number => {
           console.log(`Failed log on: ${LOG_ERROR}\n`);
         }
       );
+       */
 
       resultCode = 1;
     }
   );
   return resultCode;
+};
+
+export const parseInventory = (inventoryPath: string) => {
+  const data = fs.readFileSync(inventoryPath, { encoding: 'utf8' });
+  console.log({ data });
 };

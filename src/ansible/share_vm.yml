@@ -1,6 +1,6 @@
 ---
-- name: Reset user's password
-  hosts: all
+- name: Create VMs.
+  hosts: localhost
   gather_facts: false
 
   # Variables
@@ -15,10 +15,10 @@
         name: iaas_login
 
   # Tasks
-  # roles:
   tasks:
-    - name: Copy script
-      copy: src=./scripts/reset_password.sh dest=/tmp
+    - name: Share VM
+      include_role:
+        name: vm_share
 
   # Post-tasks
   post_tasks:

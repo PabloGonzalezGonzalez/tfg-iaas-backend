@@ -1,5 +1,5 @@
 ---
-- name: Crear MVs.
+- name: Remove MVs.
   hosts: localhost
   gather_facts: false
 

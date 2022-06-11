@@ -1,5 +1,5 @@
 ---
-- name: Create VMs.
+- name: Share VMs.
   hosts: localhost
   gather_facts: false
 

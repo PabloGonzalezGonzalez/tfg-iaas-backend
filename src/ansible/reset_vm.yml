@@ -1,5 +1,5 @@
 ---
-- name: Create VMs.
+- name: Reset VMs.
   hosts: localhost
   gather_facts: false
 
@@ -11,7 +11,7 @@
   vars:
     node_nics:
       - name: nic1
-        profile_name: DOCP2P-4010
+        profile_name: DOC1
 
   # Pre-tasks
   pre_tasks:

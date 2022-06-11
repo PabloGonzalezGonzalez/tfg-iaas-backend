@@ -1,5 +1,6 @@
 import { Playbook } from 'node-ansible';
-import { stringify as jsonToYaml } from 'json-to-pretty-yaml';
+// import { stringify as jsonToYaml } from 'json-to-pretty-yaml';
+import { stringify as jsonToYaml } from 'yaml';
 
 import fs from 'fs';
 import Path from 'path';
@@ -44,6 +45,7 @@ const LOG_SUCCESS = Path.join(
 );
 const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 const VARS_FILE = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
+const INVENTORY_PATH = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
 /* Type checkers */
 const isCreateVMInterfaceArray = (obj: unknown): obj is CreateVMInterface[] =>
@@ -52,12 +54,13 @@ const isCreateVMInterfaceArray = (obj: unknown): obj is CreateVMInterface[] =>
 const isCreateVMInterface = (obj: unknown): obj is CreateVMInterface => {
   const keys = Object.keys(obj as CreateVMInterface);
   return obj != null && keys.includes('name') && keys.includes('cluster')
-    && keys.includes('distro') && keys.includes('prefix') && keys.includes('ip')
+    && keys.includes('distro') && keys.includes('prefix')
     && keys.every((key) => typeof (obj as any)[key] === 'string');
 };
 
 /* Helpers */
 const createObjectFromString = (stringArray: string[]) => {
+
   const finalArray = [] as SimpleVMInterface[];
   stringArray.forEach((element) => {
     finalArray.push({ fullName: element });
@@ -70,6 +73,9 @@ const createObjectFromString = (stringArray: string[]) => {
 export const createVarsFile = (vars: VarsInterface): void => {
   // Create the final name for the virtual machine
   if (vars.nodes) {
+
+    console.log(isCreateVMInterfaceArray(vars.nodes));
+
     // Case: nodes are coming like CreateVMInterface[]
     if (isCreateVMInterfaceArray(vars.nodes)) {
       vars.nodes.map((node) => node['fullName'] = node.prefix
@@ -93,15 +99,13 @@ export const createVarsFile = (vars: VarsInterface): void => {
     if (error) {
       throw error;
     }
-    console.log(`Data saved on: ${VARS_FILE}\n`);
+    console.log(`\nData saved on: ${VARS_FILE}\n`);
   });
 };
 
-export const execAnsiblePlaybook = (playbookFile: string, inventory?: string): number => {
+export const execAnsiblePlaybook = async (playbookFile: string): Promise<number> => {
   const playbook = new Playbook().playbook(playbookFile);
-  if (!!inventory) {
-    playbook.inventory(inventory);
-  }
+  playbook.inventory(INVENTORY_PATH);
   playbook.on('stdout', (data) => {
     console.log(data.toString());
   });
@@ -158,6 +162,19 @@ export const execAnsiblePlaybook = (playbookFile: string, inventory?: string): n
     }
   );
   return resultCode;
+};
+
+export const execAnsiblePlaybook2 = async (playbookFile: string): Promise<any> => {
+  const playbook = new Playbook().playbook(playbookFile);
+  playbook.inventory(INVENTORY_PATH);
+  playbook.on('stdout', (data) => {
+    console.log(data.toString());
+  });
+  playbook.on('stderr', (data) => {
+    console.log(data.toString());
+  });
+
+  return playbook.exec();
 };
 
 export const parseInventory = (inventoryPath: string) => {

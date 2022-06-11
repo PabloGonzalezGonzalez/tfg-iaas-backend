@@ -1,6 +1,6 @@
 ---
 - name: Create VMs.
-  hosts:
+  hosts: localhost
   gather_facts: false
 
   # Variables

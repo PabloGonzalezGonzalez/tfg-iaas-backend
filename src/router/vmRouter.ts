@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { ActionType, createVarsFile, CreateVMInterface, execAnsiblePlaybook, NodesType } from '../utils/serverUtils';
+import { createVarsFile, CreateVMInterface, execAnsiblePlaybook } from '../utils/serverUtils';
 import Path from 'path';
 
 /* files */
@@ -32,6 +32,7 @@ const PLAYBOOKS = {
 /* router */
 const vmRouter = Router();
 
+/* Post */
 vmRouter.post('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
@@ -41,6 +42,7 @@ vmRouter.post('/', (req: Request, res: Response) => {
   res.send('Success on creating vm');
 });
 
+/* Delete */
 vmRouter.delete('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
@@ -50,17 +52,32 @@ vmRouter.delete('/', (req: Request, res: Response) => {
   res.send('Success on removing vm');
 });
 
-vmRouter.put('/', (req: Request, res: Response) => {
+/* Put */
+vmRouter.put('/state', (req: Request, res: Response) => {
+  // Case: start, stop, restart, reset
   if (req.body) {
-    const { actionType, nodes, targetUsername } = req.body;
+    const { actionType, nodes } = req.body;
     createVarsFile({
-      actionType: actionType as ActionType,
-      nodes: nodes as NodesType,
-      targetUsername: targetUsername as string
+      actionType,
+      nodes
     });
+    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`]);
+  }
+  res.send('Success on changing the state');
+});
 
-    const inventoryFile = actionType === 'resetPassword' ? INVENTORY_FILE : undefined;
-    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`], inventoryFile);
+vmRouter.put('/config', (req: Request, res: Response) => {
+  // Case: addUser, resetPassword, shareVM
+  if (req.body) {
+    const { actionType, nodes, targetUsername, ip } = req.body;
+
+    createVarsFile({
+      actionType,
+      nodes,
+      targetUsername,
+      ip
+    });
+    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`]);
   }
   res.send('Success on making an action');
 });

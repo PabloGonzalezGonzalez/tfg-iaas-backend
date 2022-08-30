@@ -2,7 +2,7 @@
 
 init:
 	@echo "Initialising the project"
-	@nvm install 16.14.2
+# 	@nvm install 16.14.2
 	@yarn install
 
 start:

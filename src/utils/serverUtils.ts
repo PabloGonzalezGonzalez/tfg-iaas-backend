@@ -33,17 +33,18 @@ interface VarsInterface {
   targetUsername?: string;
   distro?: string;
   ip?: string;
+  cluster?: string;
 }
 
 /* Constants */
-const LOG_SUCCESS = Path.join(
-  __dirname,
-  '..',
-  '..',
-  '.log',
-  'ansible_success.log'
-);
-const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
+// const LOG_SUCCESS = Path.join(
+//   __dirname,
+//   '..',
+//   '..',
+//   '.log',
+//   'ansible_success.log'
+// );
+// const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 const VARS_FILE = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 const INVENTORY_PATH = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
@@ -75,6 +76,7 @@ export const createVarsFile = (vars: VarsInterface): void => {
   if (vars.nodes) {
 
     console.log(isCreateVMInterfaceArray(vars.nodes));
+    console.log(vars);
 
     // Case: nodes are coming like CreateVMInterface[]
     if (isCreateVMInterfaceArray(vars.nodes)) {
@@ -101,67 +103,6 @@ export const createVarsFile = (vars: VarsInterface): void => {
     }
     console.log(`\nData saved on: ${VARS_FILE}\n`);
   });
-};
-
-export const execAnsiblePlaybook = async (playbookFile: string): Promise<number> => {
-  const playbook = new Playbook().playbook(playbookFile);
-  playbook.inventory(INVENTORY_PATH);
-  playbook.on('stdout', (data) => {
-    console.log(data.toString());
-  });
-  playbook.on('stderr', (data) => {
-    console.log(data.toString());
-  });
-  const promise = playbook.exec();
-
-  let resultCode;
-  promise.then(
-    (successResult) => {
-      // Successful log file
-      console.log(
-        `Success on playbook execution with exit code: ${successResult.code}`
-      );
-
-      /*
-      const date = new Date();
-      fs.appendFile(
-        LOG_SUCCESS,
-        `${date}\n${successResult.output}\n`,
-        (errorFile: ErrnoException | null) => {
-          if (errorFile) {
-            throw errorFile;
-          }
-
-          console.log(`Successful log on:  ${LOG_SUCCESS}\n`);
-        }
-      );
-       */
-
-      resultCode = successResult.code;
-    },
-    (error) => {
-      // Failed log archive
-      const date = new Date();
-      console.log('\n\t Error: \n', error);
-
-      /*
-      fs.appendFile(
-        LOG_ERROR,
-        `${date}\n${error}\n`,
-        (errorFile: ErrnoException | null) => {
-          if (errorFile) {
-            throw errorFile;
-          }
-
-          console.log(`Failed log on: ${LOG_ERROR}\n`);
-        }
-      );
-       */
-
-      resultCode = 1;
-    }
-  );
-  return resultCode;
 };
 
 export const execAnsiblePlaybook2 = async (playbookFile: string): Promise<any> => {

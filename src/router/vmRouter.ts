@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { createVarsFile, CreateVMInterface, execAnsiblePlaybook } from '../utils/serverUtils';
+import { createVarsFile, CreateVMInterface, execAnsiblePlaybook2 } from '../utils/serverUtils';
 import Path from 'path';
 
 /* files */
@@ -16,30 +16,39 @@ const RESET_PASSWORD_FILE = Path.join(
   'ansible',
   'reset_password'
 );
-const INVENTORY_FILE = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
+// const INVENTORY_FILE = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
 /* constants */
 const PLAYBOOKS = {
   start: START_FILE,
   stop: STOP_FILE,
-  restartVM: RESTART_FILE,
-  resetVM: RESET_FILE,
+  restart: RESTART_FILE,
+  reset: RESET_FILE,
   shareVM: SHARE_FILE,
-  // addUser: ADD_USER_FILE
   resetPassword: RESET_PASSWORD_FILE
+  // addUser: ADD_USER_FILE
 };
 
 /* router */
 const vmRouter = Router();
 
+// TODO write on logs
 /* Post */
 vmRouter.post('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
     createVarsFile({ nodes: nodes as CreateVMInterface[] });
-    execAnsiblePlaybook(CREATE_FILE);
+
+    execAnsiblePlaybook2(CREATE_FILE)
+      .then((data) => {
+        res.send(`Codigo ${data.code}`);
+      })
+      .catch((error) => {
+        console.warn(error);
+        res.send(`Error executing the playbook`);
+      });
   }
-  res.send('Success on creating vm');
+  res.send('Error: no body on request');
 });
 
 /* Delete */
@@ -47,23 +56,42 @@ vmRouter.delete('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
     createVarsFile({ nodes: nodes as string[] });
-    execAnsiblePlaybook(REMOVE_FILE);
+
+    execAnsiblePlaybook2(REMOVE_FILE)
+      .then((data) => {
+        res.send(`Codigo ${data.code}`);
+      })
+      .catch((error) => {
+        console.warn(error);
+        res.send(`Error executing the playbook`);
+      });
   }
-  res.send('Success on removing vm');
+  res.send('Error: no body on request');
 });
 
 /* Put */
 vmRouter.put('/state', (req: Request, res: Response) => {
   // Case: start, stop, restart, reset
   if (req.body) {
-    const { actionType, nodes } = req.body;
+    const { actionType, nodes, cluster } = req.body;
     createVarsFile({
       actionType,
-      nodes
+      nodes,
+      cluster
     });
-    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`]);
+
+    execAnsiblePlaybook2(PLAYBOOKS[`${actionType}`])
+      .then((data) => {
+        res.send(`Codigo ${data.code}`);
+      })
+      .catch((error) => {
+        console.warn(error);
+        res.send(`Error executing the playbook`);
+      });
   }
-  res.send('Success on changing the state');
+  else {
+    res.send('Error: no body on request');
+  }
 });
 
 vmRouter.put('/config', (req: Request, res: Response) => {
@@ -77,9 +105,18 @@ vmRouter.put('/config', (req: Request, res: Response) => {
       targetUsername,
       ip
     });
-    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`]);
+
+    execAnsiblePlaybook2(PLAYBOOKS[`${actionType}`])
+      .then((data) => {
+        res.send(`Codigo ${data.code}`);
+      })
+      .catch((error) => {
+        console.warn(error);
+        res.send(`Error executing the playbook`);
+      });
   }
-  res.send('Success on making an action');
+
+  res.send('Error: no body on request');
 });
 
 export default vmRouter;

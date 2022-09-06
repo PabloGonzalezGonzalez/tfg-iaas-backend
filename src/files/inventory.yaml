@@ -1,2 +1,2 @@
-- TFG-GII-PGG-pablo10
-- TFG-GII-PGG-test
+'[] + [''TFG-GII-PGG-debian-server''] + [''TFG-GII-PGG-server''] + [''TFG-GII-PGG-server-debian11'']
+    + [''TFG-GII-PGG-test-inventory''] + [''TFG-GII-PGG-test-ssh-dhcp''] + [''TFG-GII-PGG-ubuntu-ddclient'']'

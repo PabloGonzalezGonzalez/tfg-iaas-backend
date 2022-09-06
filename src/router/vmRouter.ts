@@ -14,13 +14,15 @@ const RESET_PASSWORD_FILE = Path.join(
   'ansible',
   'reset_password'
 );
+const TEST_NSUPDATE = Path.join(__dirname, '..', 'ansible', 'test_nsupdate');
 
 /* constants */
 const PLAYBOOKS = {
   start: START_FILE,
   stop: STOP_FILE,
   resetPassword: RESET_PASSWORD_FILE,
-  restart: RESTART_FILE
+  restart: RESTART_FILE,
+  nsupdate: TEST_NSUPDATE
   // resetVM: RESET_FILE,
   // clone: CLONE_FILE,
   // addUser: ADD_USER_FILE
@@ -33,18 +35,43 @@ vmRouter.post('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
     createVarsFile({ nodes: nodes as CreateVMInterface[] });
-    execAnsiblePlaybook(CREATE_FILE);
+
+    const executePlaybook = new Promise((resolve, reject) => {
+      const resultCode = execAnsiblePlaybook(CREATE_FILE);
+      if (resultCode === 0) {
+        resolve('Success');
+      }
+      reject('Error');
+    });
+
+    executePlaybook.then(
+      (value) => res.send(`Codigo: ${value}`),
+      (value) => res.send(`Codigo: ${value}`)
+    );
   }
-  res.send('Success on creating vm');
+
+  res.send('Error: no body on request');
 });
 
 vmRouter.delete('/', (req: Request, res: Response) => {
   if (req.body) {
     const { nodes } = req.body;
     createVarsFile({ nodes: nodes as string[] });
-    execAnsiblePlaybook(REMOVE_FILE);
+
+    const executePlaybook = new Promise((resolve, reject) => {
+      const resultCode = execAnsiblePlaybook(REMOVE_FILE);
+      if (resultCode === 0) {
+        resolve('Success');
+      }
+      reject('Error');
+    });
+
+    executePlaybook.then(
+      (value) => res.send(`Codigo: ${value}`),
+      (value) => res.send(`Codigo: ${value}`)
+    );
   }
-  res.send('Success on removing vm');
+  res.send('Error: no body on request');
 });
 
 vmRouter.put('/', (req: Request, res: Response) => {
@@ -55,9 +82,21 @@ vmRouter.put('/', (req: Request, res: Response) => {
       nodes: nodes as string[],
       vmUsername: vmUsername as string
     });
-    execAnsiblePlaybook(PLAYBOOKS[`${action}`]);
+
+    const executePlaybook = new Promise((resolve, reject) => {
+      const resultCode = execAnsiblePlaybook(PLAYBOOKS[`${action}`]);
+      if (resultCode === 0) {
+        resolve('Success');
+      }
+      reject('Error');
+    });
+
+    executePlaybook.then(
+      (value) => res.send(`Codigo: ${value}`),
+      (value) => res.send(`Codigo: ${value}`)
+    );
   }
-  res.send('Success on making an action');
+  res.send('Error: no body on request');
 });
 
 export default vmRouter;

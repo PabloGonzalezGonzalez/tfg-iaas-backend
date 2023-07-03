@@ -21,9 +21,7 @@
 
   # Tasks
   roles:
-# TODO ovirt_vm reset option requires cluster compatibility version 4.6 or higher
-#    - vm_reset
-# This solution needs same parameters as create_vm.yml
+    # This solution needs same parameters as create_vm.yml
     - vm_remove
     - vm_create
     - vm_init

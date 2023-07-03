@@ -5,5 +5,6 @@ dist
 pabloTFG.yaml
 vars.json
 credentials.yaml
+src/files
 
 .log

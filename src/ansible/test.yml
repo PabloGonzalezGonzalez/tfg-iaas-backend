@@ -1,0 +1,39 @@
+---
+- name: nsupdate test
+  hosts: localhost
+  gather_facts: false
+
+  # Variables
+  vars_files:
+      - ../files/pabloTFG.yaml
+      - ../files/credentials.yaml
+
+  # Pre-tasks
+  pre_tasks:
+    - name: Login to IaaS
+      include_role:
+        name: iaas_login
+
+  # Tasks
+  tasks:
+  #   - name: nsupdate
+  #     nsupdate:
+  #       server: "10.6.131.86"
+  #       zone: "midominio.local"
+  #       record: "ansible"
+  #       value: "192.168.0.25"
+    - name: List of ips
+      debug:
+        msg: "{{ lookup('community.general.dig', '10.6.129.177') }}"
+      register: result
+      ignore_errors: false
+
+    - name: result
+      debug:
+        msg: "{{ result }}"
+
+  # Post-tasks
+  post_tasks:
+    - name: Logout from IaaS
+      include_role:
+        name: iaas_logout

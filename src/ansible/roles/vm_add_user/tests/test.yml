@@ -2,4 +2,4 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - vm_share
+    - vm_add_user

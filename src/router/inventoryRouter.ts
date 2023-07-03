@@ -1,24 +1,21 @@
 import { Request, Response, Router } from 'express';
-import Path from 'path';
-import { execAnsiblePlaybook2 } from '../utils/serverUtils';
-
-/* files */
-const INVENTORY_FILE = Path.join(__dirname, '..', 'ansible', 'get_inventory');
-// const INVENTORY_RESULT_FILE = Path.join(__dirname, '..', 'files', 'inventory.yaml');
+import { exec } from 'child_process';
 
 /* router */
 const inventoryRouter = Router();
 
 inventoryRouter.get('/', async (req: Request, res: Response) => {
-  // TODO extract invetory from result
-  execAnsiblePlaybook2(INVENTORY_FILE)
-    .then((data) => {
-      res.send(`Codigo ${data.code}`);
-    })
-    .catch((error) => {
-      console.warn(error);
-      res.send(`Error executing the playbook`);
-    });
+  exec(`sh ${__dirname}/../scripts/get_inventory.sh`, (error, stdout, stderr) => {
+    if (error) {
+      res.status(400).send(`error: ${error}`);
+      return;
+    }
+    if (stderr) {
+      res.status(400).send(`stderr: ${stderr}`);
+      return;
+    }
+    res.status(200).send(`stdout: ${stdout}`);
+  });
 });
 
 export default inventoryRouter;

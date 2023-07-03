@@ -1,5 +1,5 @@
 ---
-- name: Share VMs.
+- name: Add user to VMs.
   hosts: localhost
   gather_facts: false
 
@@ -16,9 +16,9 @@
 
   # Tasks
   tasks:
-    - name: Share VM
+    - name: Add user
       include_role:
-        name: vm_share
+        name: vm_add_user
 
   # Post-tasks
   post_tasks:

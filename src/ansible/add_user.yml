@@ -1,0 +1,27 @@
+---
+- name: Add user to VMs.
+  hosts: localhost
+  gather_facts: false
+
+  # Variables
+  vars_files:
+    - ../files/pabloTFG.yaml
+    - ../files/credentials.yaml
+
+  # Pre-tasks
+  pre_tasks:
+    - name: Login to IaaS
+      include_role:
+        name: iaas_login
+
+  # Tasks
+  tasks:
+    - name: Add user
+      include_role:
+        name: vm_add_user
+
+  # Post-tasks
+  post_tasks:
+    - name: Logout from IaaS
+      include_role:
+        name: iaas_logout

@@ -2,6 +2,7 @@
 
 init:
 	@echo "Initialising the project"
+# 	@nvm install 16.14.2
 	@yarn install
 
 start:
@@ -22,6 +23,10 @@ test:
 build:
 	@echo "Building..."
 	@yarn build
+
+# nvm:
+# 	@echo "Nvm use..."
+# 	@~/.nvm/nvm.sh use
 
 --pre_check:
 	@yarn clean

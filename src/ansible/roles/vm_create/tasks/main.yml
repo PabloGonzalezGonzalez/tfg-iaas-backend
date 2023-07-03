@@ -3,13 +3,13 @@
 - name: Create a VM
   ovirt_vm:
     auth: "{{ ovirt_auth }}"
-    cluster: Cluster-Rojo
-    name: "{{ prefix }}-{{ item }}"
+    cluster: "{{ item.cluster }}"
+    name: "{{ item.fullName }}"
     cpu_cores: 1
     cpu_sockets: 1
     memory: 1GiB
-    template:  debian-11-sinred-cloudinit
+    template: "{{ item.distro }}"
     nics: "{{ node_nics }}"
-    state: absent
+    state: present
     wait: yes
   with_items: "{{ nodes }}"

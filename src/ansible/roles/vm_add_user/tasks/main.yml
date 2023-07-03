@@ -1,0 +1,21 @@
+---
+# tasks file for vm_add_user
+- name: Add UserVmManager role
+  ovirt_permission:
+    auth: "{{ ovirt_auth }}"
+    user_name: "{{ targetUsername }}"
+    authz_name: ULL-authz
+    object_type: vm
+    object_name: "{{ item.fullName }}"
+    role: UserVmManager
+  with_items: "{{ nodes }}"
+
+- name: Add UserVmRunTimeManager role
+  ovirt_permission:
+    auth: "{{ ovirt_auth }}"
+    user_name: "{{ targetUsername }}"
+    authz_name: ULL-authz
+    object_type: vm
+    object_name: "{{ item.fullName }}"
+    role: UserVmRunTimeManager
+  with_items: "{{ nodes }}"

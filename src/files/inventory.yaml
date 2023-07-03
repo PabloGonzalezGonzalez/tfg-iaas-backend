@@ -1,0 +1,22 @@
+'[] + [''{''changed'': False, ''ovirt_nics'': [{''href'': ''/ovirt-engine/api/vms/341d4a41-3743-4be9-8608-3cb3d20246cf/nics/099ae764-01aa-4926-8933-f15d6391cde6'',
+    ''id'': ''099ae764-01aa-4926-8933-f15d6391cde6'', ''name'': ''nic1'', ''vm'':
+    {''href'': ''/ovirt-engine/api/vms/341d4a41-3743-4be9-8608-3cb3d20246cf'', ''id'':
+    ''341d4a41-3743-4be9-8608-3cb3d20246cf''}, ''interface'': ''virtio'', ''linked'':
+    True, ''mac'': {''address'': ''00:1a:4a:97:54:68''}, ''network_filter_parameters'':
+    [], ''plugged'': True, ''reported_devices'': [], ''statistics'': [], ''synced'':
+    True, ''vnic_profile'': {''href'': ''/ovirt-engine/api/vnicprofiles/2ad93757-e16e-4ea0-9dfe-08d63b1aa1da'',
+    ''id'': ''2ad93757-e16e-4ea0-9dfe-08d63b1aa1da''}}], ''invocation'': {''module_args'':
+    {''vm'': ''TFG-GII-PGG-test-inventory'', ''name'': ''nic*'', ''fetch_nested'':
+    False, ''nested_attributes'': [], ''follow'': [], ''template'': None}}, ''failed'':
+    False, ''item'': ''TFG-GII-PGG-test-inventory'', ''ansible_loop_var'': ''item''}'']
+    + [''{''changed'': False, ''ovirt_nics'': [{''href'': ''/ovirt-engine/api/vms/e01822fb-74e9-465a-8309-e508797ed10f/nics/b1006839-ab8c-4b9a-84ff-f5504aba0f5c'',
+    ''id'': ''b1006839-ab8c-4b9a-84ff-f5504aba0f5c'', ''name'': ''nic1'', ''vm'':
+    {''href'': ''/ovirt-engine/api/vms/e01822fb-74e9-465a-8309-e508797ed10f'', ''id'':
+    ''e01822fb-74e9-465a-8309-e508797ed10f''}, ''interface'': ''virtio'', ''linked'':
+    True, ''mac'': {''address'': ''00:1a:4a:97:54:44''}, ''network_filter_parameters'':
+    [], ''plugged'': True, ''reported_devices'': [], ''statistics'': [], ''synced'':
+    True, ''vnic_profile'': {''href'': ''/ovirt-engine/api/vnicprofiles/2ad93757-e16e-4ea0-9dfe-08d63b1aa1da'',
+    ''id'': ''2ad93757-e16e-4ea0-9dfe-08d63b1aa1da''}}], ''invocation'': {''module_args'':
+    {''vm'': ''TFG-GII-PGG-test-ssh-dhcp'', ''name'': ''nic*'', ''fetch_nested'':
+    False, ''nested_attributes'': [], ''follow'': [], ''template'': None}}, ''failed'':
+    False, ''item'': ''TFG-GII-PGG-test-ssh-dhcp'', ''ansible_loop_var'': ''item''}'']'

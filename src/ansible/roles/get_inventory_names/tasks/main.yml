@@ -1,0 +1,61 @@
+---
+# tasks file for get_inventory_names
+- name: Get names of VMs
+  ovirt_vm_info:
+    auth: "{{ ovirt_auth }}"
+    all_content: true
+    fetch_nested: true
+    nested_attributes:
+      - tags
+      - name
+  register: vm_result
+
+- name: Inventory list of VMs
+  set_fact:
+    vms: "{{ vms }} + ['{{ item.name }}']"
+  when:
+    - item.name != 'HostedEngine'
+  with_items:
+    "{{ vm_result.ovirt_vms }}"
+
+- name: Get ips of VMs
+  ovirt_nic_info:
+    auth: "{{ ovirt_auth }}"
+    vm: "{{ item }}"
+    name: nic*
+  register: final_vm_result
+  with_items: "{{ vms }}"
+
+- name: Full inventory of VMs
+  set_fact:
+    finalVms: "{{ finalVms }} + ['{{ item }}']"
+  with_items:
+    "{{ final_vm_result.results }}"
+
+- name: Copying the inventory to an external file
+  copy:
+    content="{{ finalVms | to_nice_yaml }}"
+    dest=../files/inventory.yaml
+
+#- name: Get hosts
+#  ovirt_host_info:
+#    auth: "{{ ovirt_auth }}"
+#  register: hosts
+#
+#- name: Debug - show inventory
+#  debug:
+#    var: hosts
+
+#- name: Inventory list of stopped VMs
+#  set_fact:
+#    #    vms: "{{ vms }} + ['name: {{ item.name }} ip: {{ item.display.address }}']"
+#    vms: "{{ vms }} + ['name: {{ item.name }} ip: stopped']"
+#  when:
+#    - item.name != 'HostedEngine'
+#    - item.display.address is not defined
+#  with_items:
+#    "{{ vm_result.ovirt_vms }}"
+
+#- name: Debug - show inventory
+#  debug:
+#    msg: "Inventory: {{ final_vm_result | to_nice_yaml(indent=3) }}"

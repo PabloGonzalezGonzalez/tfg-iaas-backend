@@ -1,0 +1,8 @@
+---
+# tasks file for vm_reset
+- name: Reset VM
+  ovirt_vm:
+    auth: '{{ ovirt_auth }}'
+    name: '{{ item.fullName }}'
+    state: reset
+  with_items: "{{ nodes }}"

@@ -1,0 +1,33 @@
+---
+- name: Reset VMs.
+  hosts: localhost
+  gather_facts: false
+
+  # Variables
+  vars_files:
+    - ../files/pabloTFG.yaml
+    - ../files/credentials.yaml
+
+  vars:
+    node_nics:
+      - name: nic1
+        profile_name: DOC1
+
+  # Pre-tasks
+  pre_tasks:
+    - name: Login to IaaS
+      include_role:
+        name: iaas_login
+
+  # Tasks
+  roles:
+    # This solution needs same parameters as create_vm.yml
+    - vm_remove
+    - vm_create
+    - vm_init
+
+  # Post-tasks
+  post_tasks:
+    - name: Logout from IaaS
+      include_role:
+        name: iaas_logout

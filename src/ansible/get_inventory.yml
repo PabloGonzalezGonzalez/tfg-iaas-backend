@@ -1,9 +1,9 @@
-# In the playbook with get_inventory role, it must be vms variable in order
+# In the playbook with get_inventory_names role, it must be vms variable in order
 # to create the inventory array
 ---
-- name: Crear host inventory
+- name: Get user's inventory
   hosts: localhost
-  gather_facts: false
+  gather_facts: true
 
   # Variables
   vars_files:
@@ -12,8 +12,8 @@
 
 
   vars:
-    ssh_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOg/NpAdkuEs5SO6J3CXyP8cwrKfzt8BGURkbDjLf+64/Q2iJ+fejwNktTTUzLgFXeNgT2obetqR/J/OTctyhM3N6/3K4Td9PKk9FHEY5/w5kTr2s9PDjRRlyyRcy0riahEzxYuMzDfJIWPFYFs1Wopu0u82W5B0JCF3+Jj0shjAsT7sFQz3da82OyHurVj0djHhkTN1ksea3jUU+n4LRzFfa+OOBjgPcL9L4SGAzOI3OWC2wB3qOZ0ZpaITM1N4QAhE7pbsXxJy+MBrtEgyV8LQLTw1T/pj6m/uwh8xSpYTcUKiPIzsnV1nmHLt/Gl5HipKFurT0N7mdYZzQ3ORKJ usuario@debian
-    vms: []
+    vms: [ ]
+    finalVms: [ ]
 
   # Pre-tasks
   pre_tasks:
@@ -23,9 +23,9 @@
 
   # Tasks
   tasks:
-    - name: Get inventory
+    - name: Get inventory names
       include_role:
-        name: get_inventory
+        name: get_inventory_names
 
   # Post-tasks
   post_tasks:

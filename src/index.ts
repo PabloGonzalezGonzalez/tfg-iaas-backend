@@ -1,62 +1,24 @@
-import express, { Request, Response } from 'express';
-import { createVarsFile, execAnsiblePlaybook } from './utils/serverUtils';
-import Path from 'path';
+import express from 'express';
 
+import vmRouter from './router/vmRouter';
+import inventoryRouter from './router/inventoryRouter';
+// import { execAnsiblePlaybook } from './utils/serverUtils';
+
+/* app */
 const app = express();
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-/* constants */
-const GET_INVENTORY_PATH = Path.join(__dirname, 'ansible', 'get_inventory');
-const CREATE_VM_PATH = Path.join(__dirname, 'ansible', 'create_vm');
-const START_VM_PATH = Path.join(__dirname, 'ansible', 'start_vm');
-const STOP_VM_PATH = Path.join(__dirname, 'ansible', 'stop_vm');
-const REMOVE_VM_PATH = Path.join(__dirname, 'ansible', 'remove_vm');
-console.log({ CREATE_VM_PATH, GET_INVENTORY_PATH, START_VM_PATH });
+/* Final endpoints */
+app.use('/vm', vmRouter);
+app.use('/inventory', inventoryRouter);
 
-/* test */
-const tmpVars = {
-  action: 'remove',
-  username: 'alu0100887037',
-  password: 'password',
-  nodes: 'pablo-test',
-  prefix: 'TFG'
-};
-
-app.get('/test/create', (req: Request, res: Response) => {
-  createVarsFile(tmpVars);
-  execAnsiblePlaybook(CREATE_VM_PATH);
-
-  res.send('test create');
-});
-
-app.get('/test/inventory', (req: Request, res: Response) => {
-  createVarsFile(tmpVars);
-  execAnsiblePlaybook(GET_INVENTORY_PATH);
-
-  res.send('test inventory');
-});
-
-app.get('/test/start', (req: Request, res: Response) => {
-  createVarsFile(tmpVars);
-  execAnsiblePlaybook(START_VM_PATH);
-
-  res.send('test start');
-});
-
-app.get('/test/stop', (req: Request, res: Response) => {
-  createVarsFile(tmpVars);
-  execAnsiblePlaybook(STOP_VM_PATH);
-
-  res.send('test stop');
-});
-
-app.get('/test/remove', (req: Request, res: Response) => {
-  createVarsFile(tmpVars);
-  execAnsiblePlaybook(REMOVE_VM_PATH);
-
-  res.send('test remove');
-});
+// execAnsiblePlaybook(
+//   '/Users/pabloglez/code/personal/TFG/2021-2022/archivos-vicente/DevOps-sheeps-Debian-11-fixed-IP-address'
+// );
 
 /* server */
-app.listen(3000, () => {
+const PORT = 3000;
+app.listen(PORT, () => {
   console.log('🚀 Running at localhost:3000');
 });

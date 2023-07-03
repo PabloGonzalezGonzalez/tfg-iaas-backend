@@ -1,88 +1,113 @@
 import { Playbook } from 'node-ansible';
-import { stringify as jsonToYaml } from 'json-to-pretty-yaml';
+import { stringify as jsonToYaml } from 'yaml';
 
-import fs from 'fs';
+import fs from 'fs/promises';
 import Path from 'path';
 
-import ErrnoException = NodeJS.ErrnoException;
-
 /* Interfaces */
-interface varsObject {
-  action: string;
+export interface CreateVMInterface {
+  name: string;
+  cluster: string;
+  distro: string;
+  prefix: string;
+  ip: string;
+}
+
+export interface SimpleVMInterface {
+  fullName: string;
+}
+
+export type NodesType = CreateVMInterface[] | SimpleVMInterface[] | string[];
+
+export type ActionType = 'start' | 'stop' | 'restart' | 'resetPassword' | 'addUser';
+
+interface VarsInterface {
+  actionType?: ActionType;
+  nodes?: NodesType;
+  vmName?: string;
   username?: string;
   password?: string;
+  prefix?: string;
+  targetUsername?: string;
+  distro?: string;
+  ip?: string;
+  cluster?: string;
 }
 
 /* Constants */
-const LOG_SUCCESS = Path.join(
+export const LOG_SUCCESS = Path.join(
   __dirname,
   '..',
   '..',
   '.log',
   'ansible_success.log'
 );
-const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
+export const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
+const VARS_FILE = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
+const INVENTORY_PATH = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
-const varsFile = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
+/* Type checkers */
+const isCreateVMInterfaceArray = (obj: unknown): obj is CreateVMInterface[] =>
+  Array.isArray(obj) && obj.every(isCreateVMInterface);
 
-/* Functions */
-export const createVarsFile = (vars: varsObject) => {
-  fs.writeFile(varsFile, jsonToYaml(vars), (error: ErrnoException | null) => {
-    if (error) {
-      throw error;
-    }
-    console.log(`Data saved on: ${varsFile}\n`);
-  });
+const isCreateVMInterface = (obj: unknown): obj is CreateVMInterface => {
+  const keys = Object.keys(obj as CreateVMInterface);
+  return obj != null && keys.includes('name') && keys.includes('cluster')
+    && keys.includes('distro') && keys.includes('prefix')
+    && keys.every((key) => typeof (obj as any)[key] === 'string');
 };
 
-export const execAnsiblePlaybook = (playbookFile) => {
+/* Helpers */
+const createObjectFromString = (stringArray: string[]) => {
+  const finalArray = [] as SimpleVMInterface[];
+  stringArray.forEach((element) => {
+    finalArray.push({ fullName: element });
+  });
+
+  return finalArray;
+};
+
+/* Functions */
+export const createVarsFile = async (vars: VarsInterface): Promise<void> => {
+  // Create the final name for the virtual machine
+  if (vars.nodes) {
+    // Case: nodes are coming like CreateVMInterface[]
+    if (isCreateVMInterfaceArray(vars.nodes)) {
+      vars.nodes.map((node) => node['fullName'] = node.prefix
+        ? `${node.prefix}-${node.name}`
+        : node.name);
+    }
+    // Case: nodes are coming like string[]
+    else {
+      vars.nodes = createObjectFromString(vars.nodes as string[]);
+    }
+  }
+
+  // Set username to 'usuario' by default
+  if (vars.actionType === 'resetPassword') {
+    if (!vars.targetUsername) {
+      vars.targetUsername = 'usuario';
+    }
+  }
+
+  try {
+    await fs.writeFile(VARS_FILE, jsonToYaml(vars));
+    console.log(`\nData saved on: ${VARS_FILE}\n`);
+  } catch (err) {
+    console.error('Error: ', err);
+    throw err;
+  }
+};
+
+export const execAnsiblePlaybook = async (playbookFile: string): Promise<any> => {
   const playbook = new Playbook().playbook(playbookFile);
+  playbook.inventory(INVENTORY_PATH);
   playbook.on('stdout', (data) => {
     console.log(data.toString());
   });
   playbook.on('stderr', (data) => {
     console.log(data.toString());
   });
-  const promise = playbook.exec();
 
-  promise.then(
-    (successResult) => {
-      // Successful log file
-      console.log(
-        `Successful playbook execution with exit code: ${successResult.code}`
-      );
-
-      const date = new Date();
-      console.log(LOG_SUCCESS);
-      console.log(successResult.output);
-
-      fs.appendFile(
-        LOG_SUCCESS,
-        `${date}\n${successResult.output}`,
-        (errorFile: ErrnoException | null) => {
-          if (errorFile) {
-            throw errorFile;
-          }
-
-          console.log(`Successful log on:  ${LOG_SUCCESS}\n`);
-        }
-      );
-    },
-    (error) => {
-      // Failed log archive
-      const date = new Date();
-
-      fs.appendFile(
-        LOG_ERROR,
-        `${date}\n${error}`,
-        (errorFile: ErrnoException | null) => {
-          if (errorFile) {
-            throw errorFile;
-          }
-
-          console.log(`Failed log on: ${LOG_ERROR}\n`);
-        }
-      );
-    }
-  );
+  return playbook.exec();
 };

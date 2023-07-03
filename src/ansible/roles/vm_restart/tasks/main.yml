@@ -1,2 +1,8 @@
 ---
 # tasks file for vm_restart
+- name: Restart VM
+  ovirt_vm:
+    auth: '{{ ovirt_auth }}'
+    name: '{{ item.fullName }}'
+    state: reboot
+  with_items: "{{ nodes }}"

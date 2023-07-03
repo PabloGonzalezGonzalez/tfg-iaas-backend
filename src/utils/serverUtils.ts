@@ -1,10 +1,8 @@
 import { Playbook } from 'node-ansible';
-// import { stringify as jsonToYaml } from 'json-to-pretty-yaml';
 import { stringify as jsonToYaml } from 'yaml';
 
-import fs from 'fs';
+import fs from 'fs/promises';
 import Path from 'path';
-import ErrnoException = NodeJS.ErrnoException;
 
 /* Interfaces */
 export interface CreateVMInterface {
@@ -21,12 +19,12 @@ export interface SimpleVMInterface {
 
 export type NodesType = CreateVMInterface[] | SimpleVMInterface[] | string[];
 
-export type ActionType = 'start' | 'stop' | 'restart' | 'resetPassword';
+export type ActionType = 'start' | 'stop' | 'restart' | 'resetPassword' | 'addUser';
 
 interface VarsInterface {
   actionType?: ActionType;
   nodes?: NodesType;
-  vmName?: string; // deprecated
+  vmName?: string;
   username?: string;
   password?: string;
   prefix?: string;
@@ -37,14 +35,14 @@ interface VarsInterface {
 }
 
 /* Constants */
-// const LOG_SUCCESS = Path.join(
-//   __dirname,
-//   '..',
-//   '..',
-//   '.log',
-//   'ansible_success.log'
-// );
-// const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
+export const LOG_SUCCESS = Path.join(
+  __dirname,
+  '..',
+  '..',
+  '.log',
+  'ansible_success.log'
+);
+export const LOG_ERROR = Path.join(__dirname, '..', '..', '.log', 'ansible_error.log');
 const VARS_FILE = Path.join(__dirname, '..', 'files', 'pabloTFG.yaml');
 const INVENTORY_PATH = Path.join(__dirname, '..', 'ansible', 'inventory', 'hosts');
 
@@ -61,7 +59,6 @@ const isCreateVMInterface = (obj: unknown): obj is CreateVMInterface => {
 
 /* Helpers */
 const createObjectFromString = (stringArray: string[]) => {
-
   const finalArray = [] as SimpleVMInterface[];
   stringArray.forEach((element) => {
     finalArray.push({ fullName: element });
@@ -71,13 +68,9 @@ const createObjectFromString = (stringArray: string[]) => {
 };
 
 /* Functions */
-export const createVarsFile = (vars: VarsInterface): void => {
+export const createVarsFile = async (vars: VarsInterface): Promise<void> => {
   // Create the final name for the virtual machine
   if (vars.nodes) {
-
-    console.log(isCreateVMInterfaceArray(vars.nodes));
-    console.log(vars);
-
     // Case: nodes are coming like CreateVMInterface[]
     if (isCreateVMInterfaceArray(vars.nodes)) {
       vars.nodes.map((node) => node['fullName'] = node.prefix
@@ -97,15 +90,16 @@ export const createVarsFile = (vars: VarsInterface): void => {
     }
   }
 
-  fs.writeFile(VARS_FILE, jsonToYaml(vars), (error: ErrnoException | null) => {
-    if (error) {
-      throw error;
-    }
+  try {
+    await fs.writeFile(VARS_FILE, jsonToYaml(vars));
     console.log(`\nData saved on: ${VARS_FILE}\n`);
-  });
+  } catch (err) {
+    console.error('Error: ', err);
+    throw err;
+  }
 };
 
-export const execAnsiblePlaybook2 = async (playbookFile: string): Promise<any> => {
+export const execAnsiblePlaybook = async (playbookFile: string): Promise<any> => {
   const playbook = new Playbook().playbook(playbookFile);
   playbook.inventory(INVENTORY_PATH);
   playbook.on('stdout', (data) => {
@@ -116,9 +110,4 @@ export const execAnsiblePlaybook2 = async (playbookFile: string): Promise<any> =
   });
 
   return playbook.exec();
-};
-
-export const parseInventory = (inventoryPath: string) => {
-  const data = fs.readFileSync(inventoryPath, { encoding: 'utf8' });
-  console.log({ data });
 };

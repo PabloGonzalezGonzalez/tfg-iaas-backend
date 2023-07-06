@@ -1,11 +1,13 @@
 import { Request, Response, Router } from 'express';
 import { exec } from 'child_process';
+import { SERVER_IP } from '../config';
 
 /* router */
 const inventoryRouter = Router();
 
-inventoryRouter.get('/', async (req: Request, res: Response) => {
-  exec(`sh ${__dirname}/../scripts/get_inventory.sh`, (error, stdout, stderr) => {
+inventoryRouter.get(`/:id`, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  exec(`sh ${__dirname}/../scripts/get_inventory.sh ${SERVER_IP} ${id}`, (error, stdout, stderr) => {
     if (error) {
       res.status(400).send(`error: ${error}`);
       return;

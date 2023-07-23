@@ -7,7 +7,7 @@ const inventoryRouter = Router();
 
 inventoryRouter.get(`/:id`, async (req: Request, res: Response) => {
   const { id } = req.params;
-  exec(`sh ${__dirname}/../scripts/get_inventory.sh ${SERVER_IP} ${id}`, (error, stdout, stderr) => {
+  exec(`sh ./scripts/get_inventory.sh ${SERVER_IP} ${id}`, (error, stdout, stderr) => {
     if (error) {
       res.status(400).send(`error: ${error}`);
       return;

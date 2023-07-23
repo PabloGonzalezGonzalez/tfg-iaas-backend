@@ -1,0 +1,377 @@
+{
+	"info": {
+		"_postman_id": "c6c56965-9872-4d83-995d-038b08049a68",
+		"name": "API Ansible",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14850014"
+	},
+	"item": [
+		{
+			"name": "Test",
+			"item": [
+				{
+					"name": "/test/inventory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/test",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/test/create",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/test/create",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"test",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/test/start",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/test/start",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"test",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/test/stop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/test/stop",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"test",
+								"stop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/test/remove",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/test/remove",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"test",
+								"remove"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/vm/state",
+			"item": [
+				{
+					"name": "start",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"start\",\n    \"nodes\": [\n        \"TFG-GII-PGG-test-memoria\",\n        \"TFG-GII-PGG-node-server\"\n    ],\n    \"cluster\": \"Cluster-Rojo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "10.6.130.22:8080/vm/state",
+							"host": [
+								"10",
+								"6",
+								"130",
+								"22"
+							],
+							"port": "8080",
+							"path": [
+								"vm",
+								"state"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "stop",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"stop\",\n    \"nodes\": [\n        \"TFG-GII-PGG-test-memoria\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/vm/state",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"vm",
+								"state"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restart",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"restart\",\n    \"nodes\": [\n        \"TFG-GII-PGG-test-memoria2\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/vm/state",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"vm",
+								"state"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"reset\",\n    \"nodes\": [\n        {\n            \"name\": \"test-memoria2\",\n            \"prefix\": \"TFG-GII-PGG\",\n            \"cluster\": \"Cluster-Rojo\",\n            \"distro\": \"debian11-cloudinit\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/vm/state",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"vm",
+								"state"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/vm/config",
+			"item": [
+				{
+					"name": "reset password",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"resetPassword\",\n    \"nodes\": [\n        {\n            \"name\": \"TFG-GII-PGG-client-test\"\n        }\n    ],\n    \"targetUsername\": \"usuario\",\n    \"vmName\": \"pc01.midominio.local\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/vm/config",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"vm",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "share",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actionType\": \"share\",\n    \"targetUsername\": \"vblanco@ULL\",\n    \"nodes\": [\n        \"TFG-GII-PGG-client\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/vm/config",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"vm",
+								"config"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/vm create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nodes\": [\n        {\n            \"name\": \"test-memoria\",\n            \"prefix\": \"TFG-GII-PGG\",\n            \"cluster\": \"Cluster-Rojo\",\n            \"distro\": \"debian11-cloudinit\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/vm",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vm"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/vm remove",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nodes\": [\n        \"TFG-GII-PGG-client-test\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/vm/remove",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"vm",
+						"remove"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/inventory",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{backend-api}}/inventory/alu0100887037",
+					"host": [
+						"{{backend-api}}"
+					],
+					"path": [
+						"inventory",
+						"alu0100887037"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

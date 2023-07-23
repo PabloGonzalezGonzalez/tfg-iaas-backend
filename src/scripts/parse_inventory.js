@@ -47,7 +47,6 @@ const parseFromDigOutputToAnsibleInventoryOld = async (textToParse) => {
   const regExpForLetters = /[a-zA-Z]/g;
   const regExpForName = /\w*\.\w*\.[a-z]*\.[a-z]*.?/;
   const recordsSubstrings = relevantSubstrings.filter(substrings => regExpForName.test(substrings[0]) && !regExpForLetters.test(substrings[1]));
-  console.log({ recordsSubstrings });
 
   // Step 6
   const username = recordsSubstrings[0][0].split('.')[1];
@@ -69,5 +68,4 @@ fs.readFile(fileToRead, { encoding: 'utf-8' })
 
 const parseInventory = (textToParse) =>
   parseFromDigOutputToAnsibleInventoryOld(textToParse)
-    .then(() => console.log('success'))
     .catch((err) => console.error(err));

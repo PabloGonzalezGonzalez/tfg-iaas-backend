@@ -32,6 +32,8 @@ interface VarsInterface {
   distro?: string;
   ip?: string;
   cluster?: string;
+  ullUsername?: string;
+  inventoryGroup?: string;
 }
 
 /* Constants */
@@ -88,6 +90,9 @@ export const createVarsFile = async (vars: VarsInterface): Promise<void> => {
     if (!vars.targetUsername) {
       vars.targetUsername = 'usuario';
     }
+    if (vars.ullUsername) {
+      vars.inventoryGroup = `${vars.vmName}.${vars.ullUsername}.ull.lan`;
+    }
   }
 
   try {
@@ -99,9 +104,11 @@ export const createVarsFile = async (vars: VarsInterface): Promise<void> => {
   }
 };
 
-export const execAnsiblePlaybook = async (playbookFile: string): Promise<any> => {
+export const execAnsiblePlaybook = async (playbookFile: string, username?: string): Promise<any> => {
   const playbook = new Playbook().playbook(playbookFile);
-  playbook.inventory(INVENTORY_PATH);
+  const inventory = username ? `${INVENTORY_PATH}-${username}` : INVENTORY_PATH;
+  console.log({ inventory });
+  playbook.inventory(inventory);
   playbook.on('stdout', (data) => {
     console.log(data.toString());
   });

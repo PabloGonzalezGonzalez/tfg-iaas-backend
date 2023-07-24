@@ -70,16 +70,17 @@ vmRouter.put('/state', async (req: Request, res: Response) => {
 vmRouter.put('/config', async (req: Request, res: Response) => {
   // Case: addUser, resetPassword
   if (req.body) {
-    const { actionType, nodes, targetUsername, ip, vmName } = req.body;
+    const { actionType, nodes, targetUsername, ip, vmName, ullUsername } = req.body;
     await createVarsFile({
       actionType,
       nodes,
       targetUsername,
       ip,
-      vmName
+      vmName,
+      ullUsername
     });
 
-    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`])
+    execAnsiblePlaybook(PLAYBOOKS[`${actionType}`], ullUsername)
       .then((data) => {
         res.status(200).send(`Acción ejecutada con éxito con código de Ansible ${data.code}`);
       })

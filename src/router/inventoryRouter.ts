@@ -24,7 +24,7 @@ inventoryRouter.get(`/:id`, async (req: Request, res: Response) => {
 
     try {
       const inventory = fs.readFileSync(`./ansible/inventory/hosts-${id}`, 'utf-8');
-      console.log(inventory);
+      console.log(`Inventory: \n${inventory}`);
       res.status(200).send(inventory);
     } catch (err) {
       console.log(`Error leyendo el inventario: ${err}`);

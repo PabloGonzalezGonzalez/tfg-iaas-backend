@@ -7,6 +7,7 @@
   vars_files:
     - ../files/pabloTFG.yaml
     - ../files/credentials.yaml
+    - ../files/config.yaml
 
   vars:
     node_nics:

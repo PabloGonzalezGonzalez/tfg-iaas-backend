@@ -36,7 +36,7 @@
               password=/etc/bind/rndc.key
               use=if
               if=ens3
-              zone={{ username }}.ull.lan
+              zone={{ ullUsername }}.ull.lan
               {{ item.fullName }}
           - path: /etc/bind/rndc.key
             permissions: '0644'

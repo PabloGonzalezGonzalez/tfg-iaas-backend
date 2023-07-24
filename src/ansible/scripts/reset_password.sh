@@ -1,3 +1,2 @@
 #!/bin/bash
-
-echo 'hello world'
+sudo passwd --expire $1
